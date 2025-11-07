@@ -1,0 +1,66 @@
+# TODO: Update 'included' paths to match your project structure
+included:
+  - ios-template  # TODO: Replace with your source directory name
+
+excluded:
+  - build
+  - .build
+  - DerivedData
+  - Documentation  # TODO: Add any additional directories to exclude
+
+disabled_rules:
+  - trailing_whitespace
+  - line_length
+  - todo
+  - force_unwrapping
+  - implicitly_unwrapped_optional
+  - for_where
+  - multiple_closures_with_trailing_closure
+  - closure_parameter_position
+  - opening_brace
+
+opt_in_rules:
+  - explicit_init
+  - empty_count
+  - unneeded_parentheses_in_closure_argument
+  - file_name_no_space
+
+# Reporter for terminal output (use "github-actions-logging" in CI/CD workflows)
+# Options: "xcode", "summary", "emoji", "json", "csv"
+reporter: "xcode"
+
+# Allow short identifiers like `id`.
+identifier_name:
+  min_length: 2
+  excluded: ["id", "x", "y"]
+
+# Permit underscores in type names (e.g., Foo_macOS) and slightly longer names.
+type_name:
+  allowed_symbols: ["_"]
+  max_length: 80
+
+# Relax thresholds to reduce churn in SwiftUI-heavy files.
+function_body_length:
+  warning: 350
+  error: 400
+  ignore_comment_only_lines: true
+
+type_body_length:
+  warning: 350
+  error: 400
+  ignore_comment_only_lines: true
+
+file_length:
+  warning: 800
+  error: 2000
+  ignore_comment_only_lines: true
+
+cyclomatic_complexity:
+  warning: 15
+  error: 25
+
+trailing_comma:
+  mandatory_comma: true
+
+force_try:
+  severity: warning

@@ -19,6 +19,9 @@ xcuserdata/
 ## Build generated
 build/
 DerivedData/
+# VSCode development using Sweetpad specific
+buildServer.json
+
 
 ## Various settings
 *.pbxuser

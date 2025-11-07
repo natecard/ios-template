@@ -2,15 +2,15 @@
 //  ios_templateApp.swift
 //  ios-template
 //
-//  Created by Nate Card on 2025-11-06.
+//  Main entry point for the iOS app.
 //
 
 import SwiftUI
 
 @main
-struct ios_templateApp: App {
+struct Ios_templateApp: App {
     @State private var environment: AppEnvironment
-    
+
     init() {
         do {
             _environment = State(initialValue: try AppEnvironment())
@@ -35,7 +35,7 @@ struct ios_templateApp: App {
 /// Main tab view of the app
 struct AppTabView: View {
     @Environment(AppEnvironment.self) private var environment
-    
+
     var body: some View {
         TabView {
             // Items List Tab
@@ -48,7 +48,7 @@ struct AppTabView: View {
             .tabItem {
                 Label("Items", systemImage: "house.fill")
             }
-            
+
             // Search Tab
             SearchView(
                 viewModel: SearchViewModel(
@@ -59,7 +59,7 @@ struct AppTabView: View {
             .tabItem {
                 Label("Search", systemImage: "magnifyingglass")
             }
-            
+
             // Settings Tab
             SettingsView(
                 viewModel: SettingsViewModel(
