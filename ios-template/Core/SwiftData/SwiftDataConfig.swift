@@ -36,9 +36,9 @@ import SwiftData
 /// }
 /// ```
 public enum SwiftDataConfig {
-    
+
     // MARK: - Production Container
-    
+
     /// Creates a persistent ModelContainer for production use
     ///
     /// Data is stored in the app's Application Support directory and persists across launches.
@@ -47,23 +47,23 @@ public enum SwiftDataConfig {
     /// - Throws: Error if container creation fails
     public static func productionContainer() throws -> ModelContainer {
         let schema = Schema([
-            TemplateItemEntity.self,
+            TemplateItemEntity.self
         ])
-        
+
         let configuration = ModelConfiguration(
             schema: schema,
             isStoredInMemoryOnly: false,
             allowsSave: true
         )
-        
+
         return try ModelContainer(
             for: schema,
             configurations: [configuration]
         )
     }
-    
+
     // MARK: - In-Memory Container (Testing)
-    
+
     /// Creates an in-memory ModelContainer for testing
     ///
     /// Data exists only in memory and is not persisted. Perfect for unit tests.
@@ -95,22 +95,22 @@ public enum SwiftDataConfig {
     /// - Throws: Error if container creation fails
     public static func inMemoryContainer() throws -> ModelContainer {
         let schema = Schema([
-            TemplateItemEntity.self,
+            TemplateItemEntity.self
         ])
-        
+
         let configuration = ModelConfiguration(
             schema: schema,
             isStoredInMemoryOnly: true
         )
-        
+
         return try ModelContainer(
             for: schema,
             configurations: [configuration]
         )
     }
-    
+
     // MARK: - Custom Container
-    
+
     /// Creates a ModelContainer with custom configuration
     ///
     /// Use this when you need more control over the container setup.
@@ -127,14 +127,14 @@ public enum SwiftDataConfig {
         cloudKitEnabled: Bool = false
     ) throws -> ModelContainer {
         let schema = Schema([
-            TemplateItemEntity.self,
+            TemplateItemEntity.self
         ])
-        
+
         var configuration = ModelConfiguration(
             schema: schema,
             isStoredInMemoryOnly: inMemory
         )
-        
+
         // Note: CloudKit configuration requires proper entitlements and setup
         // See Apple's documentation for CloudKit + SwiftData integration
         if cloudKitEnabled {
@@ -144,7 +144,7 @@ public enum SwiftDataConfig {
                 cloudKitDatabase: .automatic
             )
         }
-        
+
         return try ModelContainer(
             for: schema,
             configurations: [configuration]
@@ -154,42 +154,42 @@ public enum SwiftDataConfig {
 
 // MARK: - ModelContext Helpers
 
-public extension ModelContext {
-    
+extension ModelContext {
+
     /// Save changes if there are any
     ///
     /// - Throws: Error if save fails
-    func saveIfNeeded() throws {
+    public func saveIfNeeded() throws {
         if hasChanges {
             try save()
         }
     }
-    
+
     /// Fetch all items of a given type
     ///
     /// - Parameter type: The model type to fetch
     /// - Returns: Array of fetched items
     /// - Throws: Error if fetch fails
-    func fetchAll<T: PersistentModel>(_ type: T.Type) throws -> [T] {
+    public func fetchAll<T: PersistentModel>(_ type: T.Type) throws -> [T] {
         let descriptor = FetchDescriptor<T>()
         return try fetch(descriptor)
     }
-    
+
     /// Count items of a given type
     ///
     /// - Parameter type: The model type to count
     /// - Returns: Number of items
     /// - Throws: Error if fetch fails
-    func count<T: PersistentModel>(_ type: T.Type) throws -> Int {
+    public func count<T: PersistentModel>(_ type: T.Type) throws -> Int {
         let descriptor = FetchDescriptor<T>()
         return try fetchCount(descriptor)
     }
-    
+
     /// Delete all items of a given type
     ///
     /// - Parameter type: The model type to delete
     /// - Throws: Error if delete or save fails
-    func deleteAll<T: PersistentModel>(_ type: T.Type) throws {
+    public func deleteAll<T: PersistentModel>(_ type: T.Type) throws {
         let items = try fetchAll(type)
         items.forEach { delete($0) }
         try save()

@@ -32,38 +32,38 @@ import SwiftData
 /// ```
 @Model
 public final class TemplateItemEntity {
-    
+
     // MARK: - Properties
-    
+
     /// Unique identifier
     @Attribute(.unique) public var id: String
-    
+
     /// Item title
     public var title: String
-    
+
     /// Brief summary or description
     public var summary: String
-    
+
     /// Creator or author name
     public var creator: String
-    
-    /// Creation date (indexed for sorting)
-    @Attribute(.indexed) public var createdDate: Date
-    
-    /// Primary category (indexed for filtering)
-    @Attribute(.indexed) public var primaryCategory: String
-    
+
+    /// Creation date
+    public var createdDate: Date
+
+    /// Primary category
+    public var primaryCategory: String
+
     /// All categories/tags
     public var categories: [String]
-    
+
     /// Whether item has attachment
     public var hasAttachment: Bool
-    
+
     /// URL to attachment (stored as string for transformable)
     public var attachmentURLString: String?
-    
+
     // MARK: - Computed Properties
-    
+
     /// Attachment URL (computed from string)
     public var attachmentURL: URL? {
         get {
@@ -74,9 +74,9 @@ public final class TemplateItemEntity {
             attachmentURLString = newValue?.absoluteString
         }
     }
-    
+
     // MARK: - Initialization
-    
+
     public init(
         id: String,
         title: String,
@@ -98,7 +98,7 @@ public final class TemplateItemEntity {
         self.hasAttachment = hasAttachment
         self.attachmentURLString = attachmentURL?.absoluteString
     }
-    
+
     /// Create from TemplateItem
     public convenience init(from item: TemplateItem) {
         self.init(
@@ -113,9 +113,9 @@ public final class TemplateItemEntity {
             attachmentURL: item.attachmentURL
         )
     }
-    
+
     // MARK: - Conversion
-    
+
     /// Convert to TemplateItem
     public func toTemplateItem() -> TemplateItem {
         TemplateItem(
@@ -134,31 +134,30 @@ public final class TemplateItemEntity {
 
 // MARK: - Query Helpers
 
-public extension TemplateItemEntity {
-    
+extension TemplateItemEntity {
+
     /// Predicate for filtering by category
-    static func predicateForCategory(_ category: String) -> Predicate<TemplateItemEntity> {
+    public static func predicateForCategory(_ category: String) -> Predicate<TemplateItemEntity> {
         #Predicate<TemplateItemEntity> { item in
             item.primaryCategory == category || item.categories.contains(category)
         }
     }
-    
+
     /// Predicate for searching by text
-    static func predicateForSearch(_ query: String) -> Predicate<TemplateItemEntity> {
+    public static func predicateForSearch(_ query: String) -> Predicate<TemplateItemEntity> {
         #Predicate<TemplateItemEntity> { item in
-            item.title.localizedStandardContains(query) ||
-            item.summary.localizedStandardContains(query) ||
-            item.creator.localizedStandardContains(query)
+            item.title.localizedStandardContains(query) || item.summary.localizedStandardContains(query)
+                || item.creator.localizedStandardContains(query)
         }
     }
-    
+
     /// Sort descriptor for most recent first
-    static var sortByNewest: SortDescriptor<TemplateItemEntity> {
+    public static var sortByNewest: SortDescriptor<TemplateItemEntity> {
         SortDescriptor(\.createdDate, order: .reverse)
     }
-    
+
     /// Sort descriptor for title alphabetically
-    static var sortByTitle: SortDescriptor<TemplateItemEntity> {
+    public static var sortByTitle: SortDescriptor<TemplateItemEntity> {
         SortDescriptor(\.title, order: .forward)
     }
 }
