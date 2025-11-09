@@ -78,11 +78,15 @@ public struct ItemsListView: View {
                     Button {
                         showingCategoryFilter.toggle()
                     } label: {
-                        Label(
-                            "Filter",
-                            systemImage: "line.3.horizontal.decrease.circle"
+                        AnimatedSymbol(
+                            "line.3.horizontal.decrease.circle",
+                            effect: .scale,
+                            trigger: showingCategoryFilter
                         )
+                        .font(.system(size: 20))  // iOS 26: Larger toolbar icon
                     }
+                    .accessibilityLabel("Filter by category")
+                    .accessibilityHint("Shows category filter options")
                 }
             }
             .sheet(isPresented: $showingCategoryFilter) {
@@ -94,6 +98,8 @@ public struct ItemsListView: View {
                         showingCategoryFilter = false
                     }
                 )
+                .presentationBackground(.regularMaterial)  // iOS 26: Liquid Glass sheet background
+                .presentationCornerRadius(DesignSystem.BorderRadius.xl)  // iOS 26: Larger corner radius
             }
             .task {
                 await viewModel.loadItems()
@@ -129,7 +135,8 @@ public struct ItemsListView: View {
                     )
                 }
             }
-            .padding(.horizontal, DesignSystem.Spacing.md)
+            .padding(.horizontal, DesignSystem.Spacing.lg)  // iOS 26: Increased horizontal padding
+            .padding(.vertical, DesignSystem.Spacing.sm)    // iOS 26: Added vertical padding
         }
     }
 
@@ -176,32 +183,32 @@ private struct CategoryFilterSheet: View {
                     Button {
                         onSelect(nil)
                     } label: {
-                        HStack {
+                        HStack(spacing: DesignSystem.Spacing.md) {  // iOS 26: Increased spacing
                             Text("All Items")
                             Spacer()
                             if selectedCategory == nil {
-                                Image(systemName: "checkmark")
-                                    .foregroundColor(
-                                        DesignSystem.Colors.primary
-                                    )
+                                AnimatedSymbol.favorite("checkmark", isFavorite: true)
+                                    .foregroundColor(DesignSystem.Colors.primary)
+                                    .font(.system(size: 16))  // iOS 26: Larger checkmark
                             }
                         }
+                        .padding(.vertical, DesignSystem.Spacing.xxs)  // iOS 26: Better touch target
                     }
 
                     ForEach(categories, id: \.self) { category in
                         Button {
                             onSelect(category)
                         } label: {
-                            HStack {
+                            HStack(spacing: DesignSystem.Spacing.md) {  // iOS 26: Increased spacing
                                 Text(category)
                                 Spacer()
                                 if selectedCategory == category {
-                                    Image(systemName: "checkmark")
-                                        .foregroundColor(
-                                            DesignSystem.Colors.primary
-                                        )
+                                    AnimatedSymbol.favorite("checkmark", isFavorite: true)
+                                        .foregroundColor(DesignSystem.Colors.primary)
+                                        .font(.system(size: 16))  // iOS 26: Larger checkmark
                                 }
                             }
+                            .padding(.vertical, DesignSystem.Spacing.xxs)  // iOS 26: Better touch target
                         }
                     }
                 }

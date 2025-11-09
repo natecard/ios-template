@@ -59,26 +59,30 @@ public struct SettingsView: View {
     private var premiumSection: some View {
         Section {
             if viewModel.isPremium {
-                HStack {
-                    Image(systemName: "checkmark.seal.fill")
+                HStack(spacing: DesignSystem.Spacing.md) {  // iOS 26: Increased spacing
+                    AnimatedSymbol.favorite("checkmark.seal.fill", isFavorite: true)
                         .foregroundColor(DesignSystem.Colors.success)
+                        .font(.system(size: 20))  // iOS 26: Larger icon
                     Text("Premium Unlocked")
                         .font(DesignSystem.Typography.bodyMedium)
                 }
+                .padding(.vertical, DesignSystem.Spacing.xxs)  // iOS 26: Better vertical spacing
             } else {
                 Button {
                     viewModel.showPaywall()
                 } label: {
-                    HStack {
-                        Image(systemName: "star.fill")
+                    HStack(spacing: DesignSystem.Spacing.md) {  // iOS 26: Increased spacing
+                        AnimatedSymbol("star.fill", effect: .wiggle, trigger: true)
                             .foregroundColor(DesignSystem.Colors.warning)
+                            .font(.system(size: 20))  // iOS 26: Larger icon
                         Text("Unlock Premium")
                             .font(DesignSystem.Typography.bodyMedium)
                         Spacer()
-                        Image(systemName: "chevron.right")
+                        AnimatedSymbol("chevron.right")
                             .font(.caption)
                             .foregroundColor(DesignSystem.Colors.textTertiary)
                     }
+                    .padding(.vertical, DesignSystem.Spacing.xxs)  // iOS 26: Better touch target
                 }
             }
 
@@ -97,7 +101,7 @@ public struct SettingsView: View {
 
     private var aboutSection: some View {
         Section {
-            HStack {
+            HStack(spacing: DesignSystem.Spacing.md) {  // iOS 26: Increased spacing
                 Text("Version")
                     .font(DesignSystem.Typography.bodyMedium)
                 Spacer()
@@ -105,27 +109,30 @@ public struct SettingsView: View {
                     .font(DesignSystem.Typography.bodyMedium)
                     .foregroundColor(DesignSystem.Colors.textSecondary)
             }
+            .padding(.vertical, DesignSystem.Spacing.xxs)  // iOS 26: Better vertical spacing
 
             Link(destination: URL(string: "https://natecard.dev")!) {
-                HStack {
+                HStack(spacing: DesignSystem.Spacing.md) {  // iOS 26: Increased spacing
                     Text("Website")
                         .font(DesignSystem.Typography.bodyMedium)
                     Spacer()
-                    Image(systemName: "arrow.up.right")
+                    AnimatedSymbol("arrow.up.right", effect: .scale, trigger: true)
                         .font(.caption)
                         .foregroundColor(DesignSystem.Colors.textTertiary)
                 }
+                .padding(.vertical, DesignSystem.Spacing.xxs)  // iOS 26: Better touch target
             }
 
             Link(destination: URL(string: "https://github.com/natecard/ios-template")!) {
-                HStack {
+                HStack(spacing: DesignSystem.Spacing.md) {  // iOS 26: Increased spacing
                     Text("GitHub")
                         .font(DesignSystem.Typography.bodyMedium)
                     Spacer()
-                    Image(systemName: "arrow.up.right")
+                    AnimatedSymbol("arrow.up.right", effect: .scale, trigger: true)
                         .font(.caption)
                         .foregroundColor(DesignSystem.Colors.textTertiary)
                 }
+                .padding(.vertical, DesignSystem.Spacing.xxs)  // iOS 26: Better touch target
             }
         } header: {
             Text("About")
@@ -138,13 +145,15 @@ public struct SettingsView: View {
                 viewModel.showingDeleteConfirmation = true
             } label: {
                 if viewModel.isDeleting {
-                    HStack {
-                        ProgressView()
-                            .scaleEffect(0.8)
+                    HStack(spacing: DesignSystem.Spacing.md) {  // iOS 26: Increased spacing
+                        AnimatedSymbol.loading("arrow.trianglehead.2.clockwise.rotate.90", isLoading: true)
+                            .font(.system(size: 16))
                         Text("Deleting...")
                     }
+                    .padding(.vertical, DesignSystem.Spacing.xxs)  // iOS 26: Better vertical spacing
                 } else {
                     Text("Delete All Data")
+                        .padding(.vertical, DesignSystem.Spacing.xxs)  // iOS 26: Better vertical spacing
                 }
             }
             .disabled(viewModel.isDeleting)

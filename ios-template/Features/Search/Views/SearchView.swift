@@ -32,7 +32,8 @@ public struct SearchView: View {
                         }
                     }
                 )
-                .padding(DesignSystem.Spacing.md)
+                .padding(DesignSystem.Spacing.lg)
+                .padding(.top, DesignSystem.Spacing.xxs)  // iOS 26: Tighter top spacing
 
                 // Content
                 ScrollView {
@@ -104,15 +105,16 @@ public struct SearchView: View {
                 .foregroundColor(DesignSystem.Colors.primary)
             }
             .padding(.horizontal, DesignSystem.Spacing.lg)
-            .padding(.top, DesignSystem.Spacing.md)
+            .padding(.top, DesignSystem.Spacing.lg)  // iOS 26: Increased spacing
 
             ForEach(viewModel.recentSearches, id: \.self) { query in
                 Button {
                     viewModel.selectRecentSearch(query)
                 } label: {
-                    HStack {
-                        Image(systemName: "clock.arrow.circlepath")
+                    HStack(spacing: DesignSystem.Spacing.md) {  // iOS 26: Increased spacing
+                        AnimatedSymbol("clock.arrow.circlepath")
                             .foregroundColor(DesignSystem.Colors.textSecondary)
+                            .font(.system(size: 16))
 
                         Text(query)
                             .font(DesignSystem.Typography.bodyMedium)
@@ -120,37 +122,44 @@ public struct SearchView: View {
 
                         Spacer()
 
-                        Image(systemName: "chevron.right")
+                        AnimatedSymbol("chevron.right")
                             .foregroundColor(DesignSystem.Colors.textTertiary)
                             .font(.caption)
                     }
-                    .designPadding(.all, DesignSystem.Spacing.sm)
+                    .padding(.all, DesignSystem.Spacing.md)  // iOS 26: Increased touch target
+                    .liquidGlass(.base)  // iOS 26: Liquid Glass effect
+                    .clipShape(RoundedRectangle(cornerRadius: DesignSystem.BorderRadius.md))
                 }
                 .buttonStyle(.plain)
+                .padding(.horizontal, DesignSystem.Spacing.sm)
 
-                Divider()
-                    .padding(.horizontal, DesignSystem.Spacing.lg)
+                if query != viewModel.recentSearches.last {
+                    Divider()
+                        .padding(.horizontal, DesignSystem.Spacing.lg)
+                }
             }
         }
     }
 
     private var emptyStateView: some View {
-        VStack(spacing: DesignSystem.Spacing.lg) {
-            Image(systemName: "magnifyingglass")
-                .font(.system(size: 60))
+        VStack(spacing: DesignSystem.Spacing.xl) {  // iOS 26: Increased spacing
+            AnimatedSymbol("magnifyingglass", effect: .appear, trigger: true)
+                .font(.system(size: 64))  // iOS 26: Larger icon
                 .foregroundColor(DesignSystem.Colors.textTertiary)
                 .padding(.top, 60)
 
-            Text("Search for Items")
-                .font(DesignSystem.Typography.titleMedium)
-                .foregroundColor(DesignSystem.Colors.textPrimary)
+            VStack(spacing: DesignSystem.Spacing.sm) {  // iOS 26: Better text grouping
+                Text("Search for Items")
+                    .font(DesignSystem.Typography.titleMedium)
+                    .foregroundColor(DesignSystem.Colors.textPrimary)
 
-            Text("Enter keywords to find items")
-                .font(DesignSystem.Typography.bodyMedium)
-                .foregroundColor(DesignSystem.Colors.textSecondary)
-                .multilineTextAlignment(.center)
+                Text("Enter keywords to find items")
+                    .font(DesignSystem.Typography.bodyMedium)
+                    .foregroundColor(DesignSystem.Colors.textSecondary)
+                    .multilineTextAlignment(.center)
+            }
         }
-        .padding(DesignSystem.Spacing.lg)
+        .padding(DesignSystem.Spacing.xl)  // iOS 26: Increased padding
     }
 }
 

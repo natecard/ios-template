@@ -61,7 +61,7 @@ public actor FileStorageProvider: FileStorageProviderProtocol {
         fileExtension: FileExtension
     ) async throws -> URL {
         let directory = getDirectory(for: scope)
-        let filename = "\(item.id)\(fileExtension.withDot)"
+        let filename = "\(item.id)\(await fileExtension.withDot)"
         let url = directory.appendingPathComponent(filename)
 
         try data.write(to: url, options: .atomic)
@@ -75,7 +75,7 @@ public actor FileStorageProvider: FileStorageProviderProtocol {
         fileExtension: FileExtension
     ) async -> URL? {
         let directory = getDirectory(for: scope)
-        let filename = "\(item.id)\(fileExtension.withDot)"
+        let filename = "\(item.id)\(await fileExtension.withDot)"
         let url = directory.appendingPathComponent(filename)
 
         return FileManager.default.fileExists(atPath: url.path) ? url : nil

@@ -56,10 +56,9 @@ struct FullUnlockPaywallView: View {
             Spacer()
 
             #if os(iOS)
-                ToolbarIconButton(icon: "xmark", size: .small) {
+                ToolbarIconButton(icon: "xmark", size: .small, accessibilityLabel: "Close") {
                     purchaseManager.dismissPaywall()
                 }
-                .accessibilityLabel("Close")
             #endif
         }
     }
