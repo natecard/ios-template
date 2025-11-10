@@ -14,8 +14,11 @@ struct DomainAssembly: ServiceAssembly {
         }
         .inObjectScope(.container)
 
-        container.register(PurchaseManager.self) { _ in
-            PurchaseManager()
+        container.register(PurchaseManager.self) { resolver in
+            guard let networkClient = resolver.resolve(NetworkClientProtocol.self) else {
+                fatalError("NetworkClientProtocol not registered")
+            }
+            return PurchaseManager(networkClient: networkClient)
         }
         .inObjectScope(.container)
 

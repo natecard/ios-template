@@ -11,7 +11,7 @@ import StoreKit
 
 // MARK: - Server Validation Request
 
-private struct IAPValidationRequest: Encodable, Sendable {
+nonisolated private struct IAPValidationRequest: Sendable, Encodable {
     let transactionId: String
     let productId: String
     let revoked: Bool
@@ -23,6 +23,11 @@ private struct IAPValidationRequest: Encodable, Sendable {
 @Observable
 
 public final class PurchaseManager {
+    private let networkClient: NetworkClientProtocol
+
+    public init(networkClient: NetworkClientProtocol) {
+        self.networkClient = networkClient
+    }
     // MARK: - Product IDs
     enum ProductId {
         /// Product identifier - reads from Info.plist key "IAPProductID"
@@ -410,28 +415,17 @@ public final class PurchaseManager {
     // MARK: - Server Validation
     private func postValidationToServer(transactionId: String, productId: String, revoked: Bool) {
         let isSandbox = isSandboxOverrideEnabled
-        let key = isSandbox ? "IAPValidationURLSandbox" : "IAPValidationURL"
-        guard let urlString = Bundle.main.object(forInfoDictionaryKey: key) as? String,
-            !urlString.isEmpty,
-            let url = URL(string: urlString)
-        else { return }
+        let base: NetworkBaseURL = isSandbox ? .purchasesSandbox : .purchases
+        guard let _ = Bundle.main.object(forInfoDictionaryKey: isSandbox ? "IAPValidationURLSandbox" : "IAPValidationURL") as? String else {
+            return
+        }
 
         let body = IAPValidationRequest(transactionId: transactionId, productId: productId, revoked: revoked)
 
-        guard let bodyData = try? JSONEncoder().encode(body) else { return }
-
-        Task.detached(priority: .utility) {
+        Task.detached(priority: .utility) { [networkClient, body] in
             do {
-                var request = URLRequest(url: url)
-                request.httpMethod = "POST"
-                request.setValue("application/json", forHTTPHeaderField: "Content-Type")
-                request.httpBody = bodyData
-                let (_, response) = try await URLSession.shared.data(for: request)
-                if let http = response as? HTTPURLResponse, !(200...299).contains(http.statusCode) {
-                    print(
-                        "IAP validation failed for transaction \(transactionId), product \(productId) status: \(http.statusCode)"
-                    )
-                }
+                let data = try JSONEncoder().encode(body)
+                try await networkClient.post("", base: .purchases, body: data, headers: ["Content-Type": "application/json"])
             } catch {
                 print("IAP validation POST failed: \(error)")
             }

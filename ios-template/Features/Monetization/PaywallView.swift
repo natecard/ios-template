@@ -167,6 +167,6 @@ struct FullUnlockPaywallView: View {
 #if DEBUG
     #Preview {
         FullUnlockPaywallView()
-            .environment(PurchaseManager())
+            .environment(PreviewDependencies.purchaseManager)
     }
 #endif

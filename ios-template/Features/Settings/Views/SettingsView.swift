@@ -189,11 +189,11 @@ public struct SettingsView: View {
 #Preview {
     SettingsView(
         viewModel: SettingsViewModel(
-            purchaseManager: PurchaseManager(),
+            purchaseManager: PreviewDependencies.purchaseManager,
             dataManager: ItemDataManager(
                 persistenceService: try! JSONPersistenceService()
             )
         )
     )
-    .environment(PurchaseManager())
+    .environment(PreviewDependencies.purchaseManager)
 }
