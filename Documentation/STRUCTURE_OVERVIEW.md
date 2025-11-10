@@ -12,6 +12,7 @@ This template is a production-ready SwiftUI + MVVM app skeleton with built-in mo
 - `Features/Monetization` — Paywall and purchase-related screens (using `PurchaseManager`).
 
 ## Services
+- `Services/Networking` — Shared HTTP client, base URL configuration, and API integration.
 - `Services/Monetization` — In-app purchases, account deletion, and StoreKit integration.
 - `Services/Storage` — JSON/file-based persistence and storage abstractions.
 - `Services/Security` — Keychain utilities and related helpers.

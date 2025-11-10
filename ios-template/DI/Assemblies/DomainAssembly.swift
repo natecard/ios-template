@@ -4,8 +4,11 @@ import Swinject
 struct DomainAssembly: ServiceAssembly {
     func assemble(container: Container) {
         // Register core template domain types.
-        container.register(ItemRepository.self) { _ in
-            ItemRepository()
+        container.register(ItemRepository.self) { resolver in
+            guard let client = resolver.resolve(NetworkClientProtocol.self) else {
+                fatalError("NetworkClientProtocol not registered")
+            }
+            return ItemRepository(networkClient: client)
         }
         .inObjectScope(.container)
 

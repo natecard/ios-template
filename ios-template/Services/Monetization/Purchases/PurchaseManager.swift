@@ -425,7 +425,7 @@ public final class PurchaseManager {
         Task.detached(priority: .utility) { [networkClient, body] in
             do {
                 let data = try JSONEncoder().encode(body)
-                try await networkClient.post("", base: .purchases, body: data, headers: ["Content-Type": "application/json"])
+                try await networkClient.post("", base: base, body: data, headers: ["Content-Type": "application/json"])
             } catch {
                 print("IAP validation POST failed: \(error)")
             }

@@ -212,6 +212,16 @@ DesignSystem.Spacing.xl  // 32
 
 ---
 
+## Networking
+
+- Configure base URLs in Info.plist:
+  - `APIBaseURL` — default API base
+  - `IAPValidationURL` — production IAP validation
+  - `IAPValidationURLSandbox` — sandbox IAP validation (optional)
+- `NetworkClientProtocol` is resolved via DI and implemented by `AlamofireNetworkClient`.
+- Use `ItemRepository` and other repositories/services instead of calling Alamofire directly.
+- See `NETWORKING_GUIDE.md` for details.
+
 ## Purchase System
 
 ### Initialize PurchaseManager

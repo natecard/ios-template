@@ -31,33 +31,46 @@ public protocol ItemRepositoryProtocol: Sendable {
 
 /// Default implementation of ItemRepository
 ///
-/// This implementation uses mock data. Replace with actual API calls or database queries.
+/// Remote + local pattern:
+/// - Remote: fetch from API via NetworkClientProtocol
+/// - Local: in-memory cache owned by this actor
 public actor ItemRepository: ItemRepositoryProtocol {
 
     // MARK: - Private Properties
 
+    private let networkClient: NetworkClientProtocol
     private var cachedItems: [TemplateItem] = []
     private var lastFetchDate: Date?
     private let cacheExpirationInterval: TimeInterval = 300  // 5 minutes
 
     // MARK: - Initialization
 
-    public init() {}
+    public init(networkClient: NetworkClientProtocol) {
+        self.networkClient = networkClient
+    }
 
     // MARK: - Public Methods
 
     public func fetchItems() async throws -> [TemplateItem] {
-        // Check cache validity
+        // Serve from cache if fresh
         if let lastFetch = lastFetchDate,
-            Date().timeIntervalSince(lastFetch) < cacheExpirationInterval,
-            !cachedItems.isEmpty
-        {
+           Date().timeIntervalSince(lastFetch) < cacheExpirationInterval,
+           !cachedItems.isEmpty {
             return cachedItems
         }
 
-        // In a real app, fetch from API or persistence.
-        // For template purposes, return sample data using TemplateItem.
-        let items: [TemplateItem] = []
+        // Remote fetch; adapt path to your API ("items" is a placeholder)
+        let items: [TemplateItem]
+        do {
+            items = try await networkClient.get("items", base: .default, query: nil)
+        } catch {
+            // On failure, fall back to stale cache if available
+            if !cachedItems.isEmpty {
+                return cachedItems
+            }
+            throw error
+        }
+
         cachedItems = items
         lastFetchDate = Date()
         return items
