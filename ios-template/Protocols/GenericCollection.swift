@@ -27,8 +27,8 @@ import SwiftUI
 ///     }
 /// }
 /// ```
-public protocol GenericCollection: Identifiable, Codable, Hashable {
-    associatedtype Item: GenericItem
+public protocol GenericCollection: Identifiable, Codable {
+    associatedtype Item: GenericItem & Sendable
 
     /// Unique identifier for the collection
     var id: UUID { get }

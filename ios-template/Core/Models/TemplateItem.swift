@@ -1,13 +1,13 @@
-//  
+//
 // TemplateItem.swift
 //  ios-template
 //
 //  Default item model used by the template.
-// 
+//
 
 import Foundation
 
-public struct TemplateItem: GenericItem {
+public struct TemplateItem: GenericItem, Sendable {
     public let id: String
     public let title: String
     public let summary: String

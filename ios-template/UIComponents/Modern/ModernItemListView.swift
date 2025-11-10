@@ -189,5 +189,5 @@ public struct EmptyStateConfig {
     }
 
     /// Default empty state configuration
-    public static let `default` = EmptyStateConfig()
+    @MainActor public static let `default` = EmptyStateConfig()
 }

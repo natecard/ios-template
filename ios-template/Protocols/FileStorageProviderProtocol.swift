@@ -26,8 +26,8 @@ import Foundation
 ///     // Implement other protocol methods...
 /// }
 /// ```
-public protocol FileStorageProviderProtocol<Item>: Sendable {
-    associatedtype Item: GenericItem
+public protocol FileStorageProviderProtocol<Item> {
+    associatedtype Item: GenericItem & Sendable
 
     /// Store file data for a specific item
     /// - Parameters:

@@ -116,7 +116,7 @@ public final class TemplateItemEntity {
     // MARK: - Conversion
 
     /// Convert to TemplateItem
-    public func toTemplateItem() -> TemplateItem {
+    public func toTemplateItem() async -> TemplateItem {
         TemplateItem(
             id: id,
             title: title,

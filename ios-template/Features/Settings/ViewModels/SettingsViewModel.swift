@@ -27,7 +27,7 @@ public final class SettingsViewModel {
     private let fileStorage: FileStorageProvider?
 
     // MARK: - Computed Properties
-
+    @MainActor
     public var isPremium: Bool {
         purchaseManager.isFullAppUnlocked
     }
@@ -47,7 +47,7 @@ public final class SettingsViewModel {
     // MARK: - Actions
 
     /// Show unlock paywall
-    public func showPaywall() {
+    @MainActor public func showPaywall() {
         purchaseManager.presentPaywall(source: "settings")
     }
 
@@ -74,7 +74,7 @@ public final class SettingsViewModel {
             }
 
             // Clear purchase data
-            purchaseManager.clearPurchaseData()
+            await purchaseManager.clearPurchaseData()
 
         } catch {
             deleteError = error.localizedDescription

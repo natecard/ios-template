@@ -11,8 +11,7 @@ import Observation
 /// ViewModel for the items list screen
 ///
 /// Manages item loading, searching, and filtering.
-@Observable
-public final class ItemsListViewModel {
+@MainActor @Observable public final class ItemsListViewModel {
 
     // MARK: - Published State
 

@@ -39,8 +39,8 @@ import Foundation
 /// }
 /// ```
 public protocol PersistenceServiceProtocol<Item, Collection>: Sendable {
-    associatedtype Item: GenericItem
-    associatedtype Collection: GenericCollection
+    associatedtype Item: GenericItem & Sendable
+    associatedtype Collection: GenericCollection & Sendable
 
     /// Save favorite items to storage
     /// - Parameter items: Array of items to save as favorites

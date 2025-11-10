@@ -47,7 +47,6 @@ public actor JSONPersistenceService: PersistenceServiceProtocol {
     }
 
     // MARK: - Favorites
-
     public func saveFavorites(_ items: [Item]) async throws {
         let encoder = JSONEncoder()
         encoder.outputFormatting = [.prettyPrinted, .sortedKeys]

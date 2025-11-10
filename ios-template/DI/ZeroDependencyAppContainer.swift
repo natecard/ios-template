@@ -10,7 +10,7 @@ import Foundation
 ///
 /// This variant is zero dependency and can be used as an alternative to `AppContainer`.
 /// It wires dependencies manually in code for clarity and zero external deps.
-/// 
+///
 struct ZeroDependencyAppContainer {
     // Core singletons / services
     let networkConfiguration: NetworkConfiguration
@@ -23,14 +23,14 @@ struct ZeroDependencyAppContainer {
     let itemDataManager: ItemDataManager
 
     // Feature-level view models (factories instead of singletons)
-    func makeItemsListViewModel() -> ItemsListViewModel {
+    @MainActor func makeItemsListViewModel() -> ItemsListViewModel {
         ItemsListViewModel(
             repository: itemRepository,
             dataManager: itemDataManager
         )
     }
 
-    func makeSearchViewModel() -> SearchViewModel {
+    @MainActor func makeSearchViewModel() -> SearchViewModel {
         SearchViewModel(
             repository: itemRepository,
             dataManager: itemDataManager
@@ -48,22 +48,25 @@ struct ZeroDependencyAppContainer {
 
 extension ZeroDependencyAppContainer {
     /// Build the zero-dependency container using `URLSessionNetworkClient`.
-    static func build() -> ZeroDependencyAppContainer {
+    static func build() async -> ZeroDependencyAppContainer {
         // Read base URLs from Info.plist like the Swinject-based setup.
         var baseURLs: [NetworkBaseURL: URL] = [:]
 
         if let defaultURLString = Bundle.main.object(forInfoDictionaryKey: "APIBaseURL") as? String,
-           let defaultURL = URL(string: defaultURLString) {
+            let defaultURL = URL(string: defaultURLString)
+        {
             baseURLs[.default] = defaultURL
         }
 
         if let purchasesURLString = Bundle.main.object(forInfoDictionaryKey: "IAPValidationURL") as? String,
-           let purchasesURL = URL(string: purchasesURLString) {
+            let purchasesURL = URL(string: purchasesURLString)
+        {
             baseURLs[.purchases] = purchasesURL
         }
 
         if let sandboxURLString = Bundle.main.object(forInfoDictionaryKey: "IAPValidationURLSandbox") as? String,
-           let sandboxURL = URL(string: sandboxURLString) {
+            let sandboxURL = URL(string: sandboxURLString)
+        {
             baseURLs[.purchasesSandbox] = sandboxURL
         }
 
@@ -75,7 +78,7 @@ extension ZeroDependencyAppContainer {
 
         let itemDataManager = ItemDataManager(persistenceService: jsonPersistenceService)
         let itemRepository = ItemRepository(networkClient: networkClient)
-        let purchaseManager = PurchaseManager(networkClient: networkClient)
+        let purchaseManager = await PurchaseManager(networkClient: networkClient)
 
         return ZeroDependencyAppContainer(
             networkConfiguration: networkConfiguration,
@@ -92,7 +95,7 @@ extension ZeroDependencyAppContainer {
 actor ZeroDependencyBootstrapActor {
     static let shared = ZeroDependencyBootstrapActor()
 
-    func bootstrap() async throws -> ZeroDependencyAppContainer {
+    nonisolated func bootstrap() async throws -> ZeroDependencyAppContainer {
         // Currently synchronous; kept async so projects can extend this.
         return await ZeroDependencyAppContainer.build()
     }

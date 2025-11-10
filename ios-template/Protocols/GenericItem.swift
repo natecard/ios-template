@@ -29,7 +29,6 @@ public struct ItemMetadataEntry: Codable, Equatable, Sendable {
     }
 }
 
-@MainActor
 extension ItemMetadataEntry {
     public enum DisplayStyle {
         case badge

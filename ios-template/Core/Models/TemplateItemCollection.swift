@@ -3,18 +3,17 @@
 //  ios-template
 //
 //  Default collection model used by the template.
-// 
+//
 
 import SwiftUI
 
-@Observable
-public class TemplateItemCollection: GenericCollection {
+public struct TemplateItemCollection: GenericCollection, Sendable {
     public var id: UUID
     public var items: [TemplateItem]
     public var heading: String?
 
-    public init(items: [TemplateItem], heading: String? = nil) {
-        self.id = UUID()
+    public init(id: UUID = UUID(), items: [TemplateItem], heading: String? = nil) {
+        self.id = id
         self.items = items
         self.heading = heading
     }
@@ -24,7 +23,7 @@ public class TemplateItemCollection: GenericCollection {
         case id, items, heading
     }
 
-    public required init(from decoder: Decoder) throws {
+    public init(from decoder: Decoder) throws {
         let container = try decoder.container(keyedBy: CodingKeys.self)
         self.id = try container.decode(UUID.self, forKey: .id)
         self.items = try container.decode([TemplateItem].self, forKey: .items)

@@ -21,11 +21,10 @@ import Observation
 ///     print("Item is favorited")
 /// }
 /// ```
-@MainActor
 @Observable
 public final class ItemDataManager: GenericDataManager {
-    public typealias Item = TemplateItem
     public typealias Collection = TemplateItemCollection
+    public typealias Item = TemplateItem
 
     public var items: [Item] = []
     public var favoriteItems: [Item] = []
@@ -52,17 +51,30 @@ public final class ItemDataManager: GenericDataManager {
     public func addFavorite(_ item: Item) {
         guard !isFavorite(item) else { return }
         favoriteItems.append(item)
-        Task { try? await persistenceService.saveFavorites(favoriteItems) }
+        let favoritesSnapshot = favoriteItems
+        let service = persistenceService
+        Task {
+            try? await service.saveFavorites(favoritesSnapshot)
+        }
     }
 
     public func removeFavorite(_ item: Item) {
         favoriteItems.removeAll(where: { $0.id == item.id })
-        Task { try? await persistenceService.saveFavorites(favoriteItems) }
+        let favoritesSnapshot = favoriteItems
+        let service = persistenceService
+        Task {
+            try? await service.saveFavorites(favoritesSnapshot)
+        }
     }
 
-    /// Remove all user collections managed by this data manager.
     public func removeAllCollections() {
         userCollections.removeAll(keepingCapacity: false)
-        Task { try? await persistenceService.saveCollections(userCollections) }
+
+        let collectionsSnapshot = userCollections
+        let service = persistenceService
+
+        Task {
+            try? await service.saveCollections(collectionsSnapshot)
+        }
     }
 }

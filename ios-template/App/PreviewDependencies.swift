@@ -13,7 +13,7 @@ struct PreviewDependencies {
     static let networkClient: NetworkClientProtocol = URLSessionNetworkClient(
         configuration: networkConfiguration
     )
-
+    @MainActor
     static let purchaseManager: PurchaseManager = {
         PurchaseManager(networkClient: networkClient)
     }()
