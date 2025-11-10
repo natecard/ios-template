@@ -1,3 +1,10 @@
+//
+//  ZeroDependencyAppContainer.swift
+//  ios-template
+//
+// Default Zero-Dependency App Container
+//
+
 import Foundation
 
 ///

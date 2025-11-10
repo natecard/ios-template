@@ -1,7 +1,9 @@
-//  TemplateItem.swift
+//  
+// TemplateItem.swift
 //  ios-template
 //
 //  Default item model used by the template.
+// 
 
 import Foundation
 

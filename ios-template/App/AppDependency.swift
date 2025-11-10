@@ -7,6 +7,7 @@ private struct AppContainerKey: EnvironmentKey {
 
 extension EnvironmentValues {
     /// App-wide dependency container available to SwiftUI views.
+    /// Optional: when `AppContainer` is commented out, this remains `nil` and `@Injected` cannot resolve from it.
     var appContainer: AppContainer? {
         get { self[AppContainerKey.self] }
         set { self[AppContainerKey.self] = newValue }

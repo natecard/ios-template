@@ -2,7 +2,6 @@
 //  SwiftDataConfig.swift
 //  ios-template
 //
-//
 //  Configuration helpers for SwiftData ModelContainer.
 //
 

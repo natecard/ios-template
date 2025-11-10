@@ -1,7 +1,9 @@
-//  TemplateItemCollection.swift
+//
+//   TemplateItemCollection.swift
 //  ios-template
 //
 //  Default collection model used by the template.
+// 
 
 import SwiftUI
 

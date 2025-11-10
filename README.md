@@ -6,6 +6,7 @@ A comprehensive, production-ready template for iOS and macOS applications featur
 - **40+ UI Components** including buttons, cards, inputs, feedback, and modern list views
 - **In-App Purchase System** with StoreKit 2 integration and server validation
 - **Generic Protocols** for maximum reusability across different app domains
+- **Optional Integrations** for networking/DI if you choose to add dependencies
 - **Motion & Accessibility** support with user preferences and system settings
 - **Account Management** with data deletion and iCloud sync support
 
@@ -130,8 +131,23 @@ struct ContentView: View {
 - **[Protocol Guide](Documentation/PROTOCOL_GUIDE.md)**: Implementing protocols
 - **[Customization Guide](Documentation/CUSTOMIZATION_GUIDE.md)**: Theming and adaptation
 - **[API Specification](Documentation/API_SPECIFICATION.md)**: Backend validation endpoints
-- **[Configuration](CONFIGURATION.md)**: Info.plist and StoreKit setup
-- **[CI/CD Setup](CI_CD_SETUP.md)**: GitHub Actions, linting, and formatting
+- **[Configuration](Documentation/CONFIGURATION.md)**: Info.plist and StoreKit setup
+- **[CI/CD Setup](Documentation/CI_CD_SETUP.md)**: GitHub Actions, linting, and formatting
+
+## Optional Dependencies
+
+To enable the opinionated DI and networking setup:
+
+1. Add packages via Swift Package Manager:
+   - `Swinject` (for DI) — https://github.com/Swinject/Swinject
+   - `Alamofire` (for HTTP networking) — https://github.com/Alamofire/Alamofire
+2. Uncomment the following files and fix imports as indicated in their headers:
+   - `ios-template/DI/Assemblies/InfrastructureAssembly.swift`
+   - `ios-template/DI/Assemblies/DomainAssembly.swift`
+   - `ios-template/DI/Assemblies/TemplateFeatureAssembly.swift`
+   - `ios-template/DI/Assemblies/AuthenticationAssembly.swift` (optional)
+   - `ios-template/Services/Networking/AlamofireNetworkClient.swift`
+3. Wire the assemblies into your app's container/bootstrap as shown in the DI and Networking guides.
 
 ## Requirements
 
@@ -141,7 +157,8 @@ struct ContentView: View {
 
 ## Features
 
-✅ **Zero External Dependencies** - Pure SwiftUI + Foundation  
+✅ **Zero External Dependencies by Default** - Pure SwiftUI + Foundation out of the box  
+✅ **Optional Alamofire + Swinject Support** - Uncomment provided assemblies/clients after adding packages  
 ✅ **Fully Generic** - Works with any content type  
 ✅ **Accessibility First** - VoiceOver, Dynamic Type, Reduce Motion support  
 ✅ **Production Ready** - Used in shipped apps  

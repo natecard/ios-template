@@ -2,7 +2,6 @@
 //  TemplateItemEntity.swift
 //  ios-template
 //
-//
 //  SwiftData model for persisting TemplateItem to local storage.
 //  This is OPTIONAL - use when your app needs structured local data storage.
 //

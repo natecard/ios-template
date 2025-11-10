@@ -1,7 +1,7 @@
 # Networking Guide
 
-This template includes a simple, production-friendly networking layer built on top of Alamofire and Swinject.
-All call sites depend on `NetworkClientProtocol` and repositories/services — never on Alamofire directly.
+This template includes a simple, production-friendly networking layer that is dependency-free by default.
+You can optionally wire it to Alamofire and/or a DI container such as Swinject; call sites depend only on `NetworkClientProtocol` and repositories/services — never on Alamofire directly.
 
 ## Goals
 

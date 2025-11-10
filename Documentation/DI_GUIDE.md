@@ -2,7 +2,7 @@
 
 This guide explains how dependency injection (DI) is structured in the template, how to register and resolve services, how to introduce new features safely, and how to test and override dependencies.
 
-The template uses **Swinject** for container-based DI plus a lightweight `@Injected` property wrapper that bridges the container into SwiftUI views through the environment.
+The template is dependency-free by default. You can optionally enable container-based DI (for example with Swinject or your preferred framework) and use the provided `@Injected` pattern to bridge the container into SwiftUI views through the environment.
 
 ---
 
