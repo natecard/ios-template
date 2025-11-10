@@ -91,8 +91,6 @@ public final class AlamofireNetworkClient: NetworkClientProtocol {
                     switch response.result {
                     case .success(let data):
                         continuation.resume(returning: data)
-                    case .success:
-                        continuation.resume(returning: Data())
                     case .failure(let error):
                         continuation.resume(throwing: Self.mapError(error, response.response))
                     }

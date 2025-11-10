@@ -172,7 +172,7 @@ public struct SearchView: View {
 #Preview {
     SearchView(
         viewModel: SearchViewModel(
-            repository: ItemRepository(),
+            repository: ItemRepository(networkClient: PreviewDependencies.networkClient),
             dataManager: ItemDataManager(
                 persistenceService: try! JSONPersistenceService()
             )

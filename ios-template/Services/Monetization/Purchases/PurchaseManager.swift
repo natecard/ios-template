@@ -415,7 +415,7 @@ public final class PurchaseManager {
     // MARK: - Server Validation
     private func postValidationToServer(transactionId: String, productId: String, revoked: Bool) {
         let isSandbox = isSandboxOverrideEnabled
-        let base: NetworkBaseURL = isSandbox ? .purchasesSandbox : .purchases
+        let base = isSandbox ? NetworkBaseURL.purchasesSandbox : NetworkBaseURL.purchases
         guard let _ = Bundle.main.object(forInfoDictionaryKey: isSandbox ? "IAPValidationURLSandbox" : "IAPValidationURL") as? String else {
             return
         }

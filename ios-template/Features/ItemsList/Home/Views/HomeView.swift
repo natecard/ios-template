@@ -235,7 +235,7 @@ private struct CategoryFilterSheet: View {
 #Preview {
     ItemsListView(
         viewModel: ItemsListViewModel(
-            repository: ItemRepository(),
+            repository: ItemRepository(networkClient: PreviewDependencies.networkClient),
             dataManager: ItemDataManager(
                 persistenceService: try! JSONPersistenceService()
             )
