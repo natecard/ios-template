@@ -9,68 +9,84 @@ import SwiftUI
 
 @main
 struct Ios_templateApp: App {
-    @State private var environment: AppEnvironment
-
-    init() {
-        do {
-            _environment = State(initialValue: try AppEnvironment())
-        } catch {
-            fatalError("Failed to initialize AppEnvironment: \(error)")
-        }
-    }
+    @State private var container: AppContainer?
+    @State private var purchaseManager: PurchaseManager?
+    @State private var bootstrapError: Error?
 
     var body: some Scene {
         WindowGroup {
-            AppTabView()
-                .environment(environment)
-                .environment(environment.purchaseManager)
-                .environment(environment.dataManager)
-                .onAppear {
-                    environment.start()
+            Group {
+                if let container, let purchaseManager {
+                    AppTabView()
+                        .environment(\.appContainer, container)
+                        .environment(purchaseManager)
+                } else if let error = bootstrapError {
+                    VStack(spacing: 16) {
+                        Text("Unable to Start App")
+                            .font(.headline)
+                        Text(error.localizedDescription)
+                            .multilineTextAlignment(.center)
+                            .foregroundStyle(.secondary)
+                    }
+                    .padding()
+                } else {
+                    ProgressView("Loading…")
                 }
+            }
+            .task {
+                await performBootstrap()
+            }
+        }
+    }
+
+    @MainActor
+    private func setUpPurchaseManager(with container: AppContainer) {
+        guard purchaseManager == nil,
+            let manager: PurchaseManager = container.resolve(PurchaseManager.self)
+        else {
+            return
+        }
+
+        PurchaseManagerBridge.shared.purchaseManagerRef = manager
+        manager.start()
+        purchaseManager = manager
+    }
+
+    private func performBootstrap() async {
+        guard container == nil else { return }
+
+        do {
+            let container = try await BootstrapActor.shared.bootstrap()
+            await MainActor.run {
+                self.container = container
+                setUpPurchaseManager(with: container)
+            }
+        } catch {
+            await MainActor.run {
+                bootstrapError = error
+            }
         }
     }
 }
 
 /// Main tab view of the app
 struct AppTabView: View {
-    @Environment(AppEnvironment.self) private var environment
-
     var body: some View {
         TabView {
-            // Items List Tab
-            ItemsListView(
-                viewModel: ItemsListViewModel(
-                    repository: environment.repository,
-                    dataManager: environment.dataManager
-                )
-            )
-            .tabItem {
-                Label("Items", systemImage: "house.fill")
-            }
+            ItemsListView()
+                .tabItem {
+                    Label("Items", systemImage: "house.fill")
+                }
 
-            // Search Tab
-            SearchView(
-                viewModel: SearchViewModel(
-                    repository: environment.repository,
-                    dataManager: environment.dataManager
-                )
-            )
-            .tabItem {
-                Label("Search", systemImage: "magnifyingglass")
-            }
+            SearchView()
+                .tabItem {
+                    Label("Search", systemImage: "magnifyingglass")
+                }
 
-            // Settings Tab
-            SettingsView(
-                viewModel: SettingsViewModel(
-                    purchaseManager: environment.purchaseManager,
-                    dataManager: environment.dataManager,
-                    fileStorage: environment.fileStorage
-                )
-            )
-            .tabItem {
-                Label("Settings", systemImage: "gearshape.fill")
-            }
+            SettingsView()
+                .tabItem {
+                    Label("Settings", systemImage: "gearshape.fill")
+                }
         }
     }
 }

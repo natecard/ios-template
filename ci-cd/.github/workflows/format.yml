@@ -1,0 +1,51 @@
+name: Format Code
+
+on:
+  workflow_dispatch:  # Adds a "Run workflow" button in GitHub Actions UI
+  push:
+    # TODO: Update branch name to match your auto-format branch (or remove if not needed)
+    # WARNING: This auto-commits formatted code. Use carefully on shared branches!
+    branches: [ develop ]
+
+jobs:
+  format:
+    name: Auto-format Swift Code
+    runs-on: macos-14  # TODO: Update to macos-15 or latest if needed
+    permissions:
+      # Required to push commits back to the repository
+      contents: write
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          # Uses default GITHUB_TOKEN (automatically provided by GitHub)
+          # This token has permissions defined above (contents: write)
+          token: ${{ secrets.GITHUB_TOKEN }}
+      
+      - name: Install swift-format
+        run: brew install swift-format
+      
+      - name: Format Code
+        # TODO: Adjust path if you moved scripts
+        # This modifies files in place (--in-place flag in the script)
+        run: ci-cd/scripts/format.sh
+      
+      - name: Check for changes
+        id: verify_diff
+        run: |
+          # 'git diff --quiet' exits with 0 if no changes, 1 if changes exist
+          # The || construct means: if diff has changes, set output variable
+          # $GITHUB_OUTPUT is a special file that stores output variables
+          git diff --quiet . || echo "changed=true" >> $GITHUB_OUTPUT
+      
+      - name: Commit and Push
+        # Only runs if the previous step set 'changed=true'
+        if: steps.verify_diff.outputs.changed == 'true'
+        run: |
+          # Configure git identity (required for commits)
+          # Using the GitHub Actions bot identity (standard practice)
+          git config user.name "github-actions[bot]"
+          git config user.email "github-actions[bot]@users.noreply.github.com"
+          git add .
+          # [skip ci] in commit message prevents infinite loop (won't trigger CI again)
+          git commit -m "style: auto-format code [skip ci]"
+          git push

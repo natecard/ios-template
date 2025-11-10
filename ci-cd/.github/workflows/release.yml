@@ -1,0 +1,78 @@
+name: Release
+
+on:
+  push:
+    tags:
+      # TODO: Update tag pattern if you use different versioning (e.g., 'release/*')
+      # Triggered when you push a tag: git tag v1.0.0 && git push origin v1.0.0
+      - 'v*'
+
+jobs:
+  build-and-release:
+    name: Build and Create Release
+    runs-on: macos-14  # TODO: Update to macos-15 or latest if needed
+    steps:
+      - uses: actions/checkout@v4
+      
+      - name: Select Xcode
+        # TODO: Update Xcode version to match your project requirements
+        run: sudo xcode-select -s /Applications/Xcode_15.0.app
+      
+      - name: Install Dependencies
+        run: |
+          brew install swiftlint swift-format
+      
+      - name: Run Linter
+        # TODO: Adjust path if you moved scripts
+        # Ensures code quality before creating a release
+        run: ci-cd/scripts/lint.sh
+      
+      - name: Check Formatting
+        # TODO: Update path to match your source directory (currently: ios-template/)
+        run: swift-format lint --recursive ios-template/ --strict
+      
+      - name: Archive for iOS
+        run: |
+          # 'xcodebuild archive' creates an .xcarchive bundle (similar to Product > Archive in Xcode)
+          # 'generic/platform=iOS' builds for all iOS devices (not a specific simulator)
+          # TODO: Replace 'YourAppScheme' with your actual Xcode scheme name
+          # TODO: Replace 'YourApp-iOS' with your actual app name
+          # TODO: For production releases, configure proper code signing:
+          #   - Remove CODE_SIGN_IDENTITY="" and CODE_SIGNING_REQUIRED=NO
+          #   - Add -exportArchive with proper export options plist
+          #   - Set up certificates and provisioning profiles in GitHub secrets
+          #   - See: https://docs.github.com/en/actions/deployment/deploying-xcode-applications/installing-an-apple-certificate-on-macos-runners-for-xcode-development
+          xcodebuild archive \
+            -scheme YourAppScheme \
+            -destination "generic/platform=iOS" \
+            -archivePath ./build/YourApp-iOS.xcarchive \
+            CODE_SIGN_IDENTITY="" \
+            CODE_SIGNING_REQUIRED=NO
+      
+      - name: Archive for macOS
+        run: |
+          # Same as iOS archive but for macOS platform
+          # TODO: Replace 'YourAppScheme' with your actual Xcode scheme name
+          # TODO: Replace 'YourApp-macOS' with your actual app name
+          # TODO: Remove this step if your app doesn't support macOS
+          # TODO: For production releases, configure proper code signing (see iOS step above)
+          xcodebuild archive \
+            -scheme YourAppScheme \
+            -destination "generic/platform=macOS" \
+            -archivePath ./build/YourApp-macOS.xcarchive \
+            CODE_SIGN_IDENTITY="" \
+            CODE_SIGNING_REQUIRED=NO
+      
+      - name: Create Release
+        # Creates a GitHub Release with the tag name
+        # TODO: Update to actions/create-release@v2 or use softprops/action-gh-release for better features
+        uses: actions/create-release@v1
+        env:
+          # GITHUB_TOKEN is automatically provided by GitHub Actions
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        with:
+          # ${{ github.ref }} is the full git ref (e.g., 'refs/tags/v1.0.0')
+          tag_name: ${{ github.ref }}
+          release_name: Release ${{ github.ref }}  # TODO: Customize release name format
+          draft: false  # TODO: Set to true if you want to manually publish releases
+          prerelease: false  # TODO: Set to true for beta/RC releases

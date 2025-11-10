@@ -1,0 +1,85 @@
+name: CI
+
+# Trigger conditions: when to run this workflow
+on:
+  push:
+    branches: [ main, develop ]  # TODO: Update with your branch names
+  pull_request:
+    branches: [ main, develop ]  # TODO: Update with your branch names
+
+# Jobs run in parallel by default unless you specify dependencies with 'needs'
+jobs:
+  lint:
+    name: SwiftLint
+    runs-on: macos-14  # TODO: Update to macos-15 or latest if needed
+    steps:
+      # Checkout code from the repository (necessary for every job)
+      - uses: actions/checkout@v4
+      
+      - name: Install SwiftLint
+        # Homebrew installation - same as running locally in Terminal
+        run: brew install swiftlint
+      
+      - name: Run SwiftLint
+        # Execute the lint script (exit code != 0 will fail the job)
+        run: ci-cd/scripts/lint.sh  # TODO: Adjust path if you moved scripts
+
+  format:
+    name: Swift Format Check
+    runs-on: macos-14  # TODO: Update to macos-15 or latest if needed
+    steps:
+      - uses: actions/checkout@v4
+      
+      - name: Install swift-format
+        run: brew install swift-format
+      
+      - name: Check Formatting
+        run: |
+          # TODO: Update path to match your source directory (currently: ios-template/)
+          # --strict flag means ANY formatting deviation fails the check
+          swift-format lint --recursive ios-template/ --strict
+      
+  build:
+    name: Build and Test
+    runs-on: macos-14  # TODO: Update to macos-15 or latest if needed
+    strategy:
+      # Matrix creates multiple job variations (one per combination)
+      # Example: if you have 2 schemes and 2 destinations = 4 parallel jobs
+      matrix:
+        # TODO: Replace 'YourAppScheme' with your actual Xcode scheme name
+        scheme: ['YourAppScheme']
+        destination:
+          # TODO: Update iOS version and device to match your deployment target
+          # Format: 'platform=PLATFORM,name=DEVICE,OS=VERSION'
+          - 'platform=iOS Simulator,name=iPhone 15 Pro,OS=17.0'
+          # TODO: Uncomment if your app supports macOS
+          # - 'platform=macOS'
+    steps:
+      - uses: actions/checkout@v4
+      
+      - name: Select Xcode
+        # GitHub runners may have multiple Xcode versions installed
+        # This ensures we use the correct one (like running 'xcode-select --switch' locally)
+        # TODO: Update Xcode version to match your project requirements
+        run: sudo xcode-select -s /Applications/Xcode_15.0.app
+      
+      - name: Build
+        run: |
+          # xcodebuild is the command-line equivalent of Xcode's build button
+          # CODE_SIGN_IDENTITY="" and CODE_SIGNING_REQUIRED=NO disable code signing
+          # (GitHub runners don't have your signing certificates by default)
+          xcodebuild clean build \
+            -scheme ${{ matrix.scheme }} \
+            -destination "${{ matrix.destination }}" \
+            CODE_SIGN_IDENTITY="" \
+            CODE_SIGNING_REQUIRED=NO
+      
+      - name: Run Tests
+        run: |
+          # Runs your XCTest test suite
+          # If any test fails, the entire job fails (non-zero exit code)
+          xcodebuild test \
+            -scheme ${{ matrix.scheme }} \
+            -destination "${{ matrix.destination }}" \
+            CODE_SIGN_IDENTITY="" \
+            CODE_SIGNING_REQUIRED=NO

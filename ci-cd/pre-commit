@@ -1,0 +1,69 @@
+#!/bin/zsh
+# Ensure zsh execution even if user runs 'sh pre-commit'
+if [ -z "${ZSH_VERSION:-}" ]; then
+  exec /bin/zsh "$0" "$@"
+fi
+set -euo pipefail
+
+repo_root="$(git rev-parse --show-toplevel)"
+cd "$repo_root"
+
+echo "[pre-commit] Verifying required tools..."
+command -v swiftlint >/dev/null 2>&1 || {
+  echo "SwiftLint is required. Install via: brew install swiftlint" >&2
+  exit 1
+}
+command -v swift-format >/dev/null 2>&1 || {
+  echo "swift-format is required. Install via: brew install swift-format" >&2
+  exit 1
+}
+command -v xcodebuild >/dev/null 2>&1 || {
+  echo "xcodebuild not found. Install Xcode and CLT." >&2
+  exit 1
+}
+
+# Optional: full-repo formatting before proceeding (opt-in via env)
+if [ "${PRECOMMIT_FORMAT_SCOPE:-}" = "all" ]; then
+  echo "[pre-commit] PRECOMMIT_FORMAT_SCOPE=all -> formatting entire repository..."
+  scripts/format.sh
+  if ! git diff --quiet; then
+    echo "[pre-commit] Formatting applied changes to the working tree. Please review, stage, and re-commit." >&2
+    exit 1
+  fi
+fi
+
+# Optional: allow overriding Xcode toolchain used by the hook
+if [ -n "${HOOK_DEVELOPER_DIR:-}" ]; then
+  export DEVELOPER_DIR="$HOOK_DEVELOPER_DIR"
+  echo "[pre-commit] Using DEVELOPER_DIR=$DEVELOPER_DIR"
+fi
+
+# Build configuration: default to Release to mirror Archive behavior
+BUILD_CONFIG=${BUILD_CONFIG:-Release}
+
+# Collect staged Swift files (NUL-separated to handle spaces)
+swift_files=()
+while IFS= read -r -d '' f; do
+  [[ $f == *.swift ]] && swift_files+=("$f")
+done < <(git diff --cached --name-only --diff-filter=ACMR -z)
+
+if ((${#swift_files[@]} > 0)); then
+  echo "[pre-commit] Auto-formatting staged Swift files with swift-format..."
+  swift-format format --in-place --configuration .swift-format -- "${swift_files[@]}"
+  git add -- "${swift_files[@]}"
+
+  echo "[pre-commit] Auto-correcting fixable SwiftLint violations (no SourceKit formatting)..."
+  for f in "${swift_files[@]}"; do
+    swiftlint --fix --config .swiftlint.yml --quiet "$f" || true
+  done
+  git add -- "${swift_files[@]}"
+
+  echo "[pre-commit] Running SwiftLint on staged files (blocking if not clean)..."
+  swiftlint lint --strict --config .swiftlint.yml --reporter xcode -- "${swift_files[@]}"
+else
+  echo "[pre-commit] No Swift files staged. Skipping format/lint."
+fi
+
+echo "[pre-commit] Swift files formatted and linted successfully."
+
+exit 0
