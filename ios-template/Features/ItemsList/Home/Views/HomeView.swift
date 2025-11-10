@@ -11,11 +11,15 @@ import SwiftUI
 ///
 /// Displays a list of items with search, filtering, and favorite capabilities.
 public struct ItemsListView: View {
-    @State private var viewModel: ItemsListViewModel
+    @Injected private var viewModel: ItemsListViewModel
     @State private var showingCategoryFilter = false
 
-    public init(viewModel: ItemsListViewModel) {
-        _viewModel = State(initialValue: viewModel)
+    public init(viewModel: ItemsListViewModel? = nil) {
+        if let viewModel {
+            _viewModel = Injected(wrappedValue: viewModel)
+        } else {
+            _viewModel = Injected()
+        }
     }
 
     public var body: some View {
@@ -136,7 +140,7 @@ public struct ItemsListView: View {
                 }
             }
             .padding(.horizontal, DesignSystem.Spacing.lg)  // iOS 26: Increased horizontal padding
-            .padding(.vertical, DesignSystem.Spacing.sm)    // iOS 26: Added vertical padding
+            .padding(.vertical, DesignSystem.Spacing.sm)  // iOS 26: Added vertical padding
         }
     }
 

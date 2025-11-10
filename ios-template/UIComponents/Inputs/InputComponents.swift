@@ -363,9 +363,13 @@ struct SliderInput: View {
 
         static var previews: some View {
             VStack(spacing: DesignSystem.Spacing.lg) {
-                SearchBar(text: $searchText, placeholder: "Search items...", onClear:  {
-                    print("Search tapped")
-                })
+                SearchBar(
+                    text: $searchText,
+                    placeholder: "Search items...",
+                    onClear: {
+                        print("Search tapped")
+                    }
+                )
                 #if os(iOS)
                     TextInputField(
                         title: "Item Title",

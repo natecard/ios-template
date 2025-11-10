@@ -315,12 +315,12 @@ struct FavoriteCornerButton: View {
             }
             // Accessibility announcement
             #if os(iOS)
-            Task { @MainActor in
-                UIAccessibility.post(
-                    notification: .announcement,
-                    argument: isFavorite ? "Removed from favorites" : "Added to favorites"
-                )
-            }
+                Task { @MainActor in
+                    UIAccessibility.post(
+                        notification: .announcement,
+                        argument: isFavorite ? "Removed from favorites" : "Added to favorites"
+                    )
+                }
             #endif
         }) {
             AnimatedSymbol.favorite(

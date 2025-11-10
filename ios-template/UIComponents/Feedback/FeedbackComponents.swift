@@ -40,8 +40,8 @@ struct LoadingView: View {
     var body: some View {
         VStack(spacing: DesignSystem.Spacing.lg) {  // iOS 26: Increased spacing
             AnimatedSymbol.loading("arrow.trianglehead.2.clockwise.rotate.90", isLoading: true)
-            .font(.system(size: style.size))
-            .foregroundColor(DesignSystem.Colors.primary)
+                .font(.system(size: style.size))
+                .foregroundColor(DesignSystem.Colors.primary)
             if let message = message {
                 Text(message)
                     .font(DesignSystem.Typography.bodyMedium)

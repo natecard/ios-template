@@ -21,14 +21,14 @@ public class TemplateItemCollection: GenericCollection {
     enum CodingKeys: String, CodingKey {
         case id, items, heading
     }
-    
+
     public required init(from decoder: Decoder) throws {
         let container = try decoder.container(keyedBy: CodingKeys.self)
         self.id = try container.decode(UUID.self, forKey: .id)
         self.items = try container.decode([TemplateItem].self, forKey: .items)
         self.heading = try container.decodeIfPresent(String.self, forKey: .heading)
     }
-    
+
     public func encode(to encoder: Encoder) throws {
         var container = encoder.container(keyedBy: CodingKeys.self)
         try container.encode(id, forKey: .id)

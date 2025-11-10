@@ -11,11 +11,15 @@ import SwiftUI
 ///
 /// Displays app settings, purchases, and account management.
 public struct SettingsView: View {
-    @State private var viewModel: SettingsViewModel
+    @Injected private var viewModel: SettingsViewModel
     @Environment(PurchaseManager.self) private var purchaseManager
 
-    public init(viewModel: SettingsViewModel) {
-        _viewModel = State(initialValue: viewModel)
+    public init(viewModel: SettingsViewModel? = nil) {
+        if let viewModel {
+            _viewModel = Injected(wrappedValue: viewModel)
+        } else {
+            _viewModel = Injected()
+        }
     }
 
     public var body: some View {

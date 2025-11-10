@@ -11,10 +11,14 @@ import SwiftUI
 ///
 /// Allows users to search items with recent searches.
 public struct SearchView: View {
-    @State private var viewModel: SearchViewModel
+    @Injected private var viewModel: SearchViewModel
 
-    public init(viewModel: SearchViewModel) {
-        _viewModel = State(initialValue: viewModel)
+    public init(viewModel: SearchViewModel? = nil) {
+        if let viewModel {
+            _viewModel = Injected(wrappedValue: viewModel)
+        } else {
+            _viewModel = Injected()
+        }
     }
 
     public var body: some View {

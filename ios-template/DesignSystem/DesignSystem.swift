@@ -219,11 +219,11 @@ struct DesignSystem {
         static let clear = Color.clear
         static let white = Color.white
         static let black = Color.black
-        
+
         // Liquid Glass tints - iOS 26
         static let glassTint: Color = adaptiveColor(
             light: Color(red: 0.98, green: 0.98, blue: 0.99).opacity(0.7),  // Subtle light tint
-            dark: Color(red: 0.08, green: 0.08, blue: 0.1).opacity(0.7)     // Subtle dark tint
+            dark: Color(red: 0.08, green: 0.08, blue: 0.1).opacity(0.7)  // Subtle dark tint
         )
         static let glassOverlay: Color = adaptiveColor(
             light: Color.white.opacity(0.3),
@@ -301,10 +301,10 @@ struct DesignSystem {
     struct BorderRadius {
         static let xs: CGFloat = 4
         static let sm: CGFloat = 8
-        static let md: CGFloat = 16      // iOS 26: Updated from 12
-        static let lg: CGFloat = 20      // iOS 26: Updated from 16
-        static let xl: CGFloat = 28      // iOS 26: Updated from 24
-        static let xxl: CGFloat = 36     // iOS 26: New larger radius
+        static let md: CGFloat = 16  // iOS 26: Updated from 12
+        static let lg: CGFloat = 20  // iOS 26: Updated from 16
+        static let xl: CGFloat = 28  // iOS 26: Updated from 24
+        static let xxl: CGFloat = 36  // iOS 26: New larger radius
         static let full: CGFloat = 999
     }
 
@@ -314,21 +314,21 @@ struct DesignSystem {
     struct Shadows {
         static let small = Shadow(
             color: Color(red: 0.2, green: 0.2, blue: 0.3).opacity(0.06),  // iOS 26: Reduced opacity
-            radius: 4,   // iOS 26: Increased radius
+            radius: 4,  // iOS 26: Increased radius
             x: 0,
-            y: 2         // iOS 26: Increased offset
+            y: 2  // iOS 26: Increased offset
         )
         static let medium = Shadow(
             color: Color(red: 0.2, green: 0.2, blue: 0.3).opacity(0.08),  // iOS 26: Reduced opacity
-            radius: 8,   // iOS 26: Increased radius
+            radius: 8,  // iOS 26: Increased radius
             x: 0,
-            y: 4         // iOS 26: Increased offset
+            y: 4  // iOS 26: Increased offset
         )
         static let large = Shadow(
             color: Color(red: 0.2, green: 0.2, blue: 0.3).opacity(0.10),  // iOS 26: Reduced opacity
             radius: 16,  // iOS 26: Increased radius
             x: 0,
-            y: 6         // iOS 26: Increased offset
+            y: 6  // iOS 26: Increased offset
         )
         static let xlarge = Shadow(
             color: Color(red: 0.2, green: 0.2, blue: 0.3).opacity(0.12),  // iOS 26: New extra large shadow
@@ -350,11 +350,11 @@ struct DesignSystem {
     // MARK: - Liquid Glass Materials (iOS 26)
     // Depth-aware blur and vibrancy effects with elevation levels
     enum GlassElevation {
-        case base        // Standard surface level
-        case elevated    // Slightly raised (cards, buttons)
-        case floating    // Floating above content (sheets, popovers)
-        case overlay     // Top-most layer (alerts, modals)
-        
+        case base  // Standard surface level
+        case elevated  // Slightly raised (cards, buttons)
+        case floating  // Floating above content (sheets, popovers)
+        case overlay  // Top-most layer (alerts, modals)
+
         var blurRadius: CGFloat {
             switch self {
             case .base: return 8
@@ -363,7 +363,7 @@ struct DesignSystem {
             case .overlay: return 20
             }
         }
-        
+
         var tintOpacity: Double {
             switch self {
             case .base: return 0.5
@@ -372,7 +372,7 @@ struct DesignSystem {
             case .overlay: return 0.8
             }
         }
-        
+
         var shadow: Shadow {
             switch self {
             case .base: return Shadows.small
@@ -382,7 +382,7 @@ struct DesignSystem {
             }
         }
     }
-    
+
     // MARK: - Motion Style Tokens
     // Centralized motion style tokens for consistent animation behavior
     enum Intensity: String, Equatable {
@@ -493,7 +493,7 @@ extension View {
     func motionStyle(_ style: DesignSystem.MotionStyle) -> some View {
         environment(\.motionStyle, style)
     }
-    
+
     /// Apply Liquid Glass material effect with elevation-based depth
     /// Automatically falls back to solid color with opacity on iOS 17 and earlier
     /// Respects Reduce Transparency accessibility setting
@@ -504,43 +504,43 @@ extension View {
     ) -> some View {
         if #available(iOS 18.0, *) {
             #if os(iOS)
-            // Check for Reduce Transparency accessibility setting
-            if UIAccessibility.isReduceTransparencyEnabled {
-                // Fallback to solid color for accessibility
-                self
-                    .background(DesignSystem.Colors.surface)
-                    .designShadow(elevation.shadow)
-            } else {
-                // Full Liquid Glass effect with materials
+                // Check for Reduce Transparency accessibility setting
+                if UIAccessibility.isReduceTransparencyEnabled {
+                    // Fallback to solid color for accessibility
+                    self
+                        .background(DesignSystem.Colors.surface)
+                        .designShadow(elevation.shadow)
+                } else {
+                    // Full Liquid Glass effect with materials
+                    self
+                        .background(
+                            ZStack {
+                                // Base material blur
+                                Rectangle()
+                                    .fill(.ultraThinMaterial)
+
+                                // Tint overlay
+                                (tint ?? DesignSystem.Colors.glassTint)
+                                    .opacity(elevation.tintOpacity)
+
+                                // Subtle overlay for depth
+                                DesignSystem.Colors.glassOverlay
+                            }
+                        )
+                        .designShadow(elevation.shadow)
+                }
+            #else
+                // macOS fallback
                 self
                     .background(
                         ZStack {
-                            // Base material blur
                             Rectangle()
                                 .fill(.ultraThinMaterial)
-                            
-                            // Tint overlay
                             (tint ?? DesignSystem.Colors.glassTint)
                                 .opacity(elevation.tintOpacity)
-                            
-                            // Subtle overlay for depth
-                            DesignSystem.Colors.glassOverlay
                         }
                     )
                     .designShadow(elevation.shadow)
-            }
-            #else
-            // macOS fallback
-            self
-                .background(
-                    ZStack {
-                        Rectangle()
-                            .fill(.ultraThinMaterial)
-                        (tint ?? DesignSystem.Colors.glassTint)
-                            .opacity(elevation.tintOpacity)
-                    }
-                )
-                .designShadow(elevation.shadow)
             #endif
         } else {
             // iOS 17 and earlier fallback - solid color with opacity
