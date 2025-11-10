@@ -1,0 +1,61 @@
+// This is a StoreKit configuration file for testing in-app purchases in an iOS app.
+// Replace the placeholder values with your actual app and product information.
+// This information can be found in your App Store Connect account.
+// {
+//   "appPolicies" : {
+//     "eula" : "",
+//     "policies" : [
+//       {
+//         "locale" : "",
+//         "policyText" : "",
+//         "policyURL" : ""
+//       }
+//     ]
+//   },
+//   "identifier" : "com.yourcompany.yourapp",
+//   "nonRenewingSubscriptions" : [
+
+//   ],
+//   "products" : [
+//     {
+//       "displayPrice" : "9.99",
+//       "familyShareable" : false,
+//       "internalID" : "ABC789DEF",
+//       "localizations" : [
+//         {
+//           "description" : "This unlocks all capabilities of the app.",
+//           "displayName" : "Full App Unlock",
+//           "locale" : "en_US"
+//         }
+//       ],
+//       "productID" : "your_app_full_app_in_app_purchase_unlock",
+//       "referenceName" : "Full App Unlock",
+//       "type" : "NonConsumable"
+//     }
+//   ],
+//   "settings" : {
+//     "_applicationInternalID" : "XYZ123ABC",
+//     "_askToBuyEnabled" : false,
+//     "_billingGracePeriodEnabled" : false,
+//     "_billingIssuesEnabled" : false,
+//     "_developerTeamID" : "DEF456GHI",
+//     "_disableDialogs" : false,
+//     "_failTransactionsEnabled" : false,
+//     "_lastSynchronizedDate" :  "2025-11-01T00:00:00Z",
+//     "_locale" : "en_US",
+//     "_renewalBillingIssuesEnabled" : false,
+//     "_storefront" : "USA",
+//     "_simulatedError" : null,
+//     "_storeKitErrors" : [
+
+//     ],
+//     "_timeRate" : 1
+//   },
+//   "subscriptionGroups" : [
+
+//   ],
+//   "version" : {
+//     "major" : 4,
+//     "minor" : 0
+//   }
+// }

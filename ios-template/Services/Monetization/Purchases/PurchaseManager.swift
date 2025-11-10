@@ -9,6 +9,16 @@ import Foundation
 import Observation
 import StoreKit
 
+// MARK: - Server Validation Request
+
+private struct IAPValidationRequest: Encodable, Sendable {
+    let transactionId: String
+    let productId: String
+    let revoked: Bool
+}
+
+// MARK: - Purchase Manager
+
 @MainActor
 @Observable
 
@@ -406,20 +416,16 @@ public final class PurchaseManager {
             let url = URL(string: urlString)
         else { return }
 
-        struct RequestBody: Encodable {
-            let transactionId: String
-            let productId: String
-            let revoked: Bool
-        }
+        let body = IAPValidationRequest(transactionId: transactionId, productId: productId, revoked: revoked)
 
-        let body = RequestBody(transactionId: transactionId, productId: productId, revoked: revoked)
+        guard let bodyData = try? JSONEncoder().encode(body) else { return }
 
         Task.detached(priority: .utility) {
             do {
                 var request = URLRequest(url: url)
                 request.httpMethod = "POST"
                 request.setValue("application/json", forHTTPHeaderField: "Content-Type")
-                request.httpBody = try JSONEncoder().encode(body)
+                request.httpBody = bodyData
                 let (_, response) = try await URLSession.shared.data(for: request)
                 if let http = response as? HTTPURLResponse, !(200...299).contains(http.statusCode) {
                     print(

@@ -2,7 +2,7 @@
 //  ios_templateTests.swift
 //  ios-templateTests
 //
-//  Created by Nate Card on 2025-11-06.
+//
 //
 
 import Testing

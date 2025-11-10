@@ -2,7 +2,7 @@
 //  ios_templateUITestsLaunchTests.swift
 //  ios-templateUITests
 //
-//  Created by Nate Card on 2025-11-06.
+//
 //
 
 import XCTest

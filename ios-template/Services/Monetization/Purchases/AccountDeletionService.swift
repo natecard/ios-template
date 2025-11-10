@@ -67,7 +67,7 @@ where Collection.Item == Item {
 
             // Step 4: Clear Apple Sign-In credentials
             print("🔐 Clearing Apple Sign-In credentials...")
-            clearAppleSignIn()
+            await clearAppleSignIn()
             print("✅ Apple Sign-In cleared")
 
             // Step 5: Clear UserDefaults preferences
@@ -119,8 +119,10 @@ where Collection.Item == Item {
         await purchaseManager.clearPurchaseData()
     }
 
-    private func clearAppleSignIn() {
-        _ = KeychainUtility.clearAppleUserID()
+    private func clearAppleSignIn() async {
+        await MainActor.run {
+            _ = KeychainUtility.clearAppleUserID()
+        }
     }
 
     private func clearUserDefaults() {
